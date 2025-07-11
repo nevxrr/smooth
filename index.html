@@ -41,7 +41,8 @@
         const user = getSession();
 
         if (user) {
-            window.location.href = getLastPage();
+            const lastPage = getLastPage();
+            window.location.href = lastPage;
         } else {
             document.querySelector('.reg').addEventListener('click', () => {
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -54,7 +55,7 @@
         }
 
         window.addEventListener('beforeunload', () => {
-            localStorage.setItem('lastPage', window.location.pathname);
+            localStorage.setItem('lastPage', window.location.href);
         });
     </script>
 </body>
