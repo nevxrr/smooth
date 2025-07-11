@@ -32,7 +32,7 @@
         <div id="photo-result" style="display: none;">
             <img id="photo-output" alt="Снимок">
             <button type="button" id="next-button" style="display: none;"
-                onclick="window.location.href='opros.html';">Далее</button>
+                onclick="handleNextButtonClick();">Далее</button>
         </div>
     </div>
 
@@ -54,6 +54,17 @@
             document.querySelectorAll('.selfie-container > *:not(#photo-result)').forEach(element => {
                 element.style.display = 'none';
             });
+        };
+
+        const checkSession = () => {
+            if (sessionStorage.getItem('completed')) {
+                window.location.href = 'opros.html';
+            }
+        };
+
+        const handleNextButtonClick = () => {
+            sessionStorage.setItem('completed', true);
+            window.location.href = 'opros.html';
         };
 
         openCameraButton.addEventListener('click', async () => {
@@ -110,6 +121,9 @@
                 instructions.style.display = 'none'; // Hide the instructions
             }
         });
+
+        // Check session on page load
+        checkSession();
     </script>
 
     <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
