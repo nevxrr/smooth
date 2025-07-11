@@ -24,23 +24,28 @@
             конфиденциальности</a></p>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        const saveSession = (user) => {
+        const saveSession = (user, lastPage) => {
             localStorage.setItem('tgUser', JSON.stringify(user));
+            localStorage.setItem('lastPage', lastPage);
         };
 
         const getSession = () => {
             return JSON.parse(localStorage.getItem('tgUser'));
         };
 
+        const getLastPage = () => {
+            return localStorage.getItem('lastPage') || 'selfie.html';
+        };
+
         const tg = window.Telegram.WebApp;
         const user = getSession();
 
         if (user) {
-            window.location.href = 'selfie.html';
+            window.location.href = getLastPage();
         } else {
             document.querySelector('.reg').addEventListener('click', () => {
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    saveSession(tg.initDataUnsafe.user);
+                    saveSession(tg.initDataUnsafe.user, 'selfie.html');
                     window.location.href = 'selfie.html';
                 } else {
                     alert('Пожалуйста, авторизуйтесь через Telegram Mini App.');
@@ -48,6 +53,9 @@
             });
         }
 
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('lastPage', window.location.pathname);
+        });
     </script>
 </body>
 
