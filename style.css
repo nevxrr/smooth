@@ -58,13 +58,13 @@ main {
     align-items: center;
     font-size: 20px;
     font-weight: 400;
-    width: 70%;
+    width: 80%;
     justify-content: space-around;
     color: rgba(73, 73, 73, 1);
 }
 
 .qwot p{
-    margin-left: 10px;
+    margin-left: 20px;
 }
 
 .arrow {
@@ -89,31 +89,31 @@ h1 {
 }
 
 .reg {
-    font-family: 'PT Sans Caption', sans-serif;
-    font-weight: 400;
+    font-family: "Roboto Flex", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings:
+        "slnt" 0,
+        "wdth" 151,
+        "GRAD" 0,
+        "XOPQ" 102,
+        "XTRA" 468,
+        "YOPQ" 79,
+        "YTAS" 750,
+        "YTDE" -203,
+        "YTFI" 738,
+        "YTLC" 514,
+        "YTUC" 712;
+    font-weight: 500;
     font-size: 18px;
     border-radius: 10px;
     outline: none;
     border: none;
-    color: white;
+    color: #ffffff;
     width: 289px;
     height: 52px;
     background: RGBA(129, 111, 175, 1);
-    background: linear-gradient(90deg, rgba(129, 111, 175, 1) 0%, rgba(103, 188, 191, 1) 50%, rgba(97, 182, 118, 1) 100%);
-}
-
-.auth {
-    font-family: 'PT Sans Caption', sans-serif;
-    font-weight: 400;
-    font-size: 18px;
-    border-radius: 10px;
-    outline: none;
-    border: none;
-    color: rgba(73, 73, 73, 1);
-    width: 289px;
-    height: 52px;
-    background-color: rgba(255, 255, 255, 1);
-    margin-top: 20px;
+    background: linear-gradient(90deg, rgba(129, 111, 175, 0.62) 0%, rgba(103, 188, 191, 0.62) 100%);
 }
 
 .policy {
