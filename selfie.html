@@ -12,7 +12,7 @@
     <h1>Сделайте фото</h1>
     <div class="selfie-container">
         <form id="selfie-form">
-            <video id="camera-stream" autoplay style="display: none;"></video>
+            <video id="camera-stream" autoplay playsinline style="display: none; transform: scaleX(-1);"></video>
             <ul id="instructions">
                 <li>✅ Четко и прямо</li>
                 <li>✅ Без макияжа и фильтров</li>
@@ -55,7 +55,7 @@
 
         openCameraButton.addEventListener('click', async () => {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
                 cameraStream.srcObject = stream;
                 cameraStream.style.display = 'flex';
                 takePhotoButton.style.display = 'flex';
