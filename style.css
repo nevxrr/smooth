@@ -63,6 +63,10 @@ main {
     color: rgba(73, 73, 73, 1);
 }
 
+.qwot p{
+    margin-left: 10px;
+}
+
 .arrow {
     width: 29px;
     height: 30.318359375px;
