@@ -31,7 +31,8 @@
         </form>
         <div id="photo-result" style="display: none;">
             <img id="photo-output" alt="Снимок">
-            <button type="button" id="next-button" style="display: none;">Далее</button>
+            <button type="button" id="next-button" style="display: none;"
+                onclick="window.location.href='opros.html';">Далее</button>
         </div>
     </div>
 
@@ -108,10 +109,6 @@
                 reader.readAsDataURL(file);
                 instructions.style.display = 'none'; // Hide the instructions
             }
-        });
-
-        nextButton.addEventListener('click', () => {
-            window.location.href = 'opros.html';
         });
     </script>
 
