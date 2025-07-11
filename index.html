@@ -47,7 +47,7 @@
             document.querySelector('.reg').addEventListener('click', () => {
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     saveSession(tg.initDataUnsafe.user, 'selfie.html');
-                    window.location.href = 'selfie.html';
+                    // window.location.href = 'selfie.html';
                 } else {
                     alert('Пожалуйста, авторизуйтесь через Telegram Mini App.');
                 }
