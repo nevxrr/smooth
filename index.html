@@ -21,6 +21,15 @@
         <button class="reg">✨ НАЧАТЬ ✨</button>
     </div>
     <p class="policy">Продолжая, вы соглашаетесь с нашими <a href="">условиями</a> и <a href="">политикой конфиденциальности</a></p>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        document.querySelector('.reg').addEventListener('click', () => {
+            const tg = window.Telegram.WebApp;
+            tg.initDataUnsafe && tg.initDataUnsafe.user 
+                ? alert(`Добро пожаловать, ${tg.initDataUnsafe.user.first_name}!`)
+                : alert('Пожалуйста, авторизуйтесь через Telegram Mini App.');
+        });
+    </script>
 </body>
 
 </html>
