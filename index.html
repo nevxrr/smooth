@@ -33,22 +33,21 @@
         };
 
         const tg = window.Telegram.WebApp;
-        const user = tg.initDataUnsafe ? tg.initDataUnsafe.user : getSession();
+        const user = getSession();
 
         if (user) {
-            saveSession(user);
-            window.location.href = 'selfie.html';
-        } else {
-            document.querySelector('.reg').addEventListener('click', () => {
-                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    alert(`Добро пожаловать, ${tg.initDataUnsafe.user.first_name}!`);
-                    saveSession(tg.initDataUnsafe.user);
-                    window.location.href = 'selfie.html';
-                } else {
-                    alert('Пожалуйста, авторизуйтесь через Telegram Mini App.');
-                }
-            });
+            alert(`Добро пожаловать обратно, ${user.first_name}!`);
         }
+
+        document.querySelector('.reg').addEventListener('click', () => {
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            alert(`Добро пожаловать, ${tg.initDataUnsafe.user.first_name}!`);
+            saveSession(tg.initDataUnsafe.user);
+            window.location.href = 'selfie.html';
+            } else {
+            alert('Пожалуйста, авторизуйтесь через Telegram Mini App.');
+            }
+        });
 
     </script>
 </body>
