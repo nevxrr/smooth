@@ -9,10 +9,10 @@
 </head>
 
 <body>
-    <h1>Сделайте фото</h1>
+    <h1 id="title">Сделайте фото</h1>
     <div class="selfie-container">
         <form id="selfie-form">
-            <video id="camera-stream" autoplay playsinline style="display: none; transform: scaleX(-1); height: 400px; width: 350px;" muted></video>
+            <video id="camera-stream" autoplay playsinline style="display: none; transform: scaleX(-1);" muted></video>
             <ul id="instructions">
                 <li>✅ Четко и прямоо</li>
                 <li>✅ Без макияжа и фильтров</li>
@@ -46,6 +46,7 @@
         const photoOutput = document.getElementById('photo-output');
         const nextButton = document.getElementById('next-button');
         const instructions = document.getElementById('instructions');
+        const title = document.getElementById('title');
 
         const hideAllElements = () => {
             document.querySelectorAll('.selfie-container > *:not(#photo-result)').forEach(element => {
@@ -63,6 +64,8 @@
                 takePhotoButton.style.display = 'flex';
                 uploadLabel.style.display = 'none'; // Hide the label when the camera is opened
                 instructions.style.display = 'none'; // Hide the instructions
+                openCameraButton.style.display = 'none'; // Hide the open camera button
+                title.style.display = 'none'; // Hide the title
             } catch (error) {
                 alert('Не удалось открыть камеру: ' + error.message);
             }
