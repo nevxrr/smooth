@@ -113,6 +113,9 @@
 
         async function handleNextButtonClick() {
             try {
+                // Save the button click status in local storage
+                localStorage.setItem('nextButtonClicked', 'true');
+
                 const userData = {
                     userId: 'telegram_user_id', // Replace with actual Telegram user ID
                     status: true
@@ -135,6 +138,14 @@
                 alert('Ошибка при сохранении данных: ' + error.message);
             }
         }
+
+        // Check local storage on page load
+        window.addEventListener('load', () => {
+            const nextButtonClicked = localStorage.getItem('nextButtonClicked');
+            if (nextButtonClicked === 'true') {
+                window.location.href = 'opros.html';
+            }
+        });
     </script>
 
     <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
