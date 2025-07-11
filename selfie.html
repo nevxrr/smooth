@@ -12,7 +12,7 @@
     <h1>Сделайте фото</h1>
     <div class="selfie-container">
         <form id="selfie-form">
-            <video id="camera-stream" autoplay playsinline style="display: none; transform: scaleX(-1);"></video>
+            <video id="camera-stream" autoplay playsinline style="display: none; transform: scaleX(-1);" muted></video>
             <ul id="instructions">
                 <li>✅ Четко и прямо</li>
                 <li>✅ Без макияжа и фильтров</li>
@@ -57,7 +57,9 @@
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
                 cameraStream.srcObject = stream;
-                cameraStream.style.display = 'flex';
+                cameraStream.style.display = 'block';
+                cameraStream.style.width = '100%'; // Ensure it doesn't open fullscreen
+                cameraStream.style.height = 'auto'; // Maintain aspect ratio
                 takePhotoButton.style.display = 'flex';
                 uploadLabel.style.display = 'none'; // Hide the label when the camera is opened
                 instructions.style.display = 'none'; // Hide the instructions
