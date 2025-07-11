@@ -4,12 +4,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="selfie.css">
     <title>Smooth</title>
 </head>
 
 <body>
-    <h1>hi</h1>
+    <h1>Сделайте фото</h1>
+    <div class="selfie-container">
+        <form id="selfie-form">
+            <video id="camera-stream" autoplay style="display: none;"></video>
+            <ul id="instructions">
+                <li>✅ Четко и прямо</li>
+                <li>✅ Без макияжа и фильтров</li>
+                <li>✅ При хорошем освещении</li>
+            </ul>
+            <div class="btns">
+                <button type="button" id="open-camera">Открыть камеру</button>
+                <button type="button" id="take-photo" style="display: none;">Сделать снимок</button>
+                <label class="input-file" id="upload-label">
+                    <input type="file" id="upload-photo" accept="image/*">
+                    <span>Выберите файл</span>
+                </label>
+            </div>
+            <canvas id="snapshot" style="display: none;"></canvas>
+        </form>
+        <div id="photo-result" style="display: none;">
+            <img id="photo-output" alt="Снимок">
+            <button type="button" id="next-button" style="display: none;">Далее</button>
+        </div>
+    </div>
+
+    <script>
+        const openCameraButton = document.getElementById('open-camera');
+        const takePhotoButton = document.getElementById('take-photo');
+        const uploadPhotoInput = document.getElementById('upload-photo');
+        const uploadLabel = document.getElementById('upload-label');
+        const cameraStream = document.getElementById('camera-stream');
+        const snapshotCanvas = document.getElementById('snapshot');
+        const snapshotContext = snapshotCanvas.getContext('2d');
+        const photoResult = document.getElementById('photo-result');
+        const photoOutput = document.getElementById('photo-output');
+        const nextButton = document.getElementById('next-button');
+        const instructions = document.getElementById('instructions');
+
+        const hideAllElements = () => {
+            document.querySelectorAll('.selfie-container > *:not(#photo-result)').forEach(element => {
+                element.style.display = 'none';
+            });
+        };
+
+        openCameraButton.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                cameraStream.srcObject = stream;
+                cameraStream.style.display = 'flex';
+                takePhotoButton.style.display = 'flex';
+                uploadLabel.style.display = 'none'; // Hide the label when the camera is opened
+                instructions.style.display = 'none'; // Hide the instructions
+            } catch (error) {
+                alert('Не удалось открыть камеру: ' + error.message);
+            }
+        });
+
+        takePhotoButton.addEventListener('click', () => {
+            snapshotCanvas.width = cameraStream.videoWidth;
+            snapshotCanvas.height = cameraStream.videoHeight;
+            snapshotContext.drawImage(cameraStream, 0, 0, snapshotCanvas.width, snapshotCanvas.height);
+
+            const photoData = snapshotCanvas.toDataURL('image/png');
+            photoOutput.src = photoData;
+
+            hideAllElements();
+            photoResult.style.display = 'flex';
+            nextButton.style.display = 'flex';
+        });
+
+        uploadPhotoInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        snapshotCanvas.width = img.width;
+                        snapshotCanvas.height = img.height;
+                        snapshotContext.drawImage(img, 0, 0);
+
+                        const photoData = snapshotCanvas.toDataURL('image/png');
+                        photoOutput.src = photoData;
+
+                        hideAllElements();
+                        photoResult.style.display = 'flex';
+                        nextButton.style.display = 'flex';
+                    };
+                };
+                reader.readAsDataURL(file);
+                instructions.style.display = 'none'; // Hide the instructions
+            }
+        });
+    </script>
+
+    <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+        $('.input-file input[type=file]').on('change', function () {
+            let file = this.files[0];
+            $(this).next().html(file.name);
+        });
+    </script>
 </body>
 
 </html>

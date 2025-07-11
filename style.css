@@ -63,7 +63,7 @@ main {
     color: rgba(73, 73, 73, 1);
 }
 
-.qwot p{
+.qwot p {
     margin-left: 20px;
 }
 
@@ -72,7 +72,7 @@ main {
     height: 30.318359375px;
 }
 
-h1 {
+main h1 {
     font-weight: 600;
     font-size: 27px;
     margin: 0;
@@ -128,3 +128,4 @@ a {
     color: rgba(68, 68, 68, 1);
     font-weight: 600;
 }
+
