@@ -208,7 +208,7 @@ video{
 #next-button {
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 20px;
     font-family: "Roboto Flex", sans-serif;
     font-optical-sizing: auto;
     font-style: normal;
@@ -227,11 +227,12 @@ video{
     font-weight: 500;
     font-size: 18px;
     border-radius: 10px;
+    padding: 40px 0;
     outline: none;
     border: none;
     color: #ffffff;
     width: 289px;
-    height: 82px;
+    height: 52px;
     background: RGBA(129, 111, 175, 1);
     background: linear-gradient(90deg, rgba(129, 111, 175, 0.62) 0%, rgba(103, 188, 191, 0.62) 100%);
 }

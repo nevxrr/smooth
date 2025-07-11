@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
     <link rel="stylesheet" href="style.css">
     <title>Smooth</title>
 </head>
@@ -39,12 +39,12 @@
             window.location.href = 'selfie.html';
         } else {
             document.querySelector('.reg').addEventListener('click', () => {
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                saveSession(tg.initDataUnsafe.user);
-                window.location.href = 'selfie.html';
-            } else {
-                alert('Пожалуйста, авторизуйтесь через Telegram Mini App.');
-            }
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    saveSession(tg.initDataUnsafe.user);
+                    window.location.href = 'selfie.html';
+                } else {
+                    alert('Пожалуйста, авторизуйтесь через Telegram Mini App.');
+                }
             });
         }
 
