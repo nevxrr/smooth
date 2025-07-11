@@ -22,6 +22,8 @@ body {
         "YTFI" 738,
         "YTLC" 514,
         "YTUC" 712;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 html {
@@ -128,4 +130,3 @@ a {
     color: rgba(68, 68, 68, 1);
     font-weight: 600;
 }
-
