@@ -63,8 +63,25 @@
         };
 
         const handleNextButtonClick = () => {
-            sessionStorage.setItem('completed', true);
-            window.location.href = 'opros.html';
+            const data = { buttonClicked: 'next' };
+            fetch('/save-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                if (response.ok) {
+                    sessionStorage.setItem('completed', true);
+                    window.location.href = 'opros.html';
+                } else {
+                    alert('Ошибка при сохранении данных');
+                }
+            })
+            .catch(error => {
+                alert('Ошибка: ' + error.message);
+            });
         };
 
         openCameraButton.addEventListener('click', async () => {
