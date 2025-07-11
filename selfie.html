@@ -56,34 +56,6 @@
             });
         };
 
-        const checkSession = () => {
-            if (sessionStorage.getItem('completed')) {
-                window.location.href = 'opros.html';
-            }
-        };
-
-        const handleNextButtonClick = () => {
-            const data = { buttonClicked: 'next' };
-            fetch('/save-data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-            .then(response => {
-                if (response.ok) {
-                    sessionStorage.setItem('completed', true);
-                    window.location.href = 'opros.html';
-                } else {
-                    alert('Ошибка при сохранении данных');
-                }
-            })
-            .catch(error => {
-                alert('Ошибка: ' + error.message);
-            });
-        };
-
         openCameraButton.addEventListener('click', async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
@@ -139,8 +111,30 @@
             }
         });
 
-        // Check session on page load
-        checkSession();
+        async function handleNextButtonClick() {
+            try {
+                const userData = {
+                    userId: 'telegram_user_id', // Replace with actual Telegram user ID
+                    status: true
+                };
+
+                const response = await fetch('/save-user-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save user data');
+                }
+
+                window.location.href = 'opros.html';
+            } catch (error) {
+                alert('Ошибка при сохранении данных: ' + error.message);
+            }
+        }
     </script>
 
     <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
