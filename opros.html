@@ -1,11 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="opros.css">
 </head>
+
 <body>
-    
+    <img src="./logo.png" alt="" class="logo">
+    <div id="quiz-container">
+        <div class="bars">
+            <div id="progress-bar"></div>
+            <div id="bar-shutter"></div>
+        </div>
+        <div id="question-container" class="gridQuest"></div>
+        <button id="next-button" style="margin-top: 20px;">Далее</button>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "Укажите свой пол:", opis: "Давайте начнём вашу персональную бьюти-историю со знакомства!", answers: ["Мужчина", "Женщина"] },
+            { question: "Укажите свой возраст:", opis: "Кожа в разном возрасте нуждается в различном уходе", answers: ["До 18", "18-25", "26-35", "36-45", "46+"] },
+            { question: "Какой у тебя тип кожи?", opis: "Поможет определить базовые потребности в уходе", answers: ["Сухая", "Жирная", "Комбинированная", "Нормальная", "Чувствительная"] },
+            { question: "Какие проблемы кожи тебя беспокоят?", opis: "Можете выбрать несколько", answers: ["Акне", "Сухость", "Повреждённый барьер", "Обезвоженность", "Покраснения", "Пигментация", "Жирность", "Расширенные поры", "Признаки старения", "Чувствительность"], multiple: true },
+            { question: "Какие у тебя цели в уходе?", opis: "Можете выбрать несколько", answers: ["Увлажнение", "Борьба с акне", "Избавление от морщин", "Осветление пигментации", "Успокоение кожи", "Матирование", "Общее улучшение кожи"], multiple: true },
+            { question: "Сколько ступеней ухода предпочитаешь?", opis: "От минимализма до многослойного ритуала", answers: ["Минимальный уход (3 шага)", "Стандартный (5 шагов)", "Расширенный (7+ шагов)"] },
+            { question: "Какие страны-производители косметики предпочитаешь?", opis: "", answers: ["Нет предпочтений", "Корейская", "Европейская", "Российская"] },
+            { question: "Какой бюджет на уход?", opis: "Подберем варианты под твои предпочтения ", answers: ["До 1000₽", "1000-3000₽", "Выше 3000₽"] }
+        ];
+
+        let currentQuestionIndex = 0;
+        const answers = {};
+
+        const progressBar = document.getElementById("progress-bar");
+        const questionContainer = document.getElementById("question-container");
+        const nextButton = document.getElementById("next-button");
+
+        function renderQuestion() {
+            const questionData = questions[currentQuestionIndex];
+            questionContainer.innerHTML = `
+                <h2>${questionData.question}</h2>
+                <p>${questionData.opis}</p>
+                <div class="answerDiv">
+                ${questionData.answers.map((answer, index) => `
+                
+                    <label>
+                        <input type="${questionData.multiple ? 'checkbox' : 'radio'}" name="answer" value="${answer}">
+                        <span onclick=(togglecolor())>${answer}</span>
+                    </label>
+                `).join("")}
+                </div>
+            `;
+        }
+
+        function saveAnswer() {
+            const selectedAnswers = Array.from(document.querySelectorAll('input[name="answer"]:checked')).map(input => input.value);
+            if (selectedAnswers.length > 0) {
+                answers[currentQuestionIndex] = selectedAnswers;
+                localStorage.setItem("quizAnswers", JSON.stringify(answers));
+            }
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = progress + "%";
+        }
+
+        nextButton.addEventListener("click", () => {
+            saveAnswer();
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+                updateProgressBar();
+            } else {
+                window.location.href = "result.html";
+            }
+        });
+
+        renderQuestion();
+        updateProgressBar();
+    </script>
 </body>
+
 </html>

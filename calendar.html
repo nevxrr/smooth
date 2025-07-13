@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь ухода за кожей</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wdth,wght,XOPQ@8..144,151,100..1000,102&family=Roboto:wght@800&display=swap');
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background-color: rgb(229, 254, 255);
+            font-family: "Roboto Flex", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+            font-variation-settings:
+                "slnt" 0,
+                "wdth" 151,
+                "GRAD" 0,
+                "XOPQ" 102,
+                "XTRA" 468,
+                "YOPQ" 79,
+                "YTAS" 750,
+                "YTDE" -203,
+                "YTFI" 738,
+                "YTLC" 514,
+                "YTUC" 712;
+            /* overflow-y: hidden; */
+        }
+
+        body {
+            display: flex;
+            /* justify-content: center; */
+            align-items: center;
+            flex-direction: column;
+            /* text-align: center; */
+            /* height: 70%; */
+        }
+
+        .logo {
+            margin-top: 20px;
+            width: 81px;
+            height: 32px;
+        }
+
+        .calendar {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+            margin-bottom: 20px;
+            width: 80%;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .calendar-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .current-time {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .week-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .day {
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .current-day {
+            background: RGBA(129, 111, 175, 1);
+            background: linear-gradient(90deg, rgba(129, 111, 175, 0.62) 0%, rgba(103, 188, 191, 0.62) 100%);
+            color: white;
+            font-weight: bold;
+        }
+
+        .routine-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+            margin-bottom: 20px;
+            width: 80%;
+        }
+
+        .routine-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .routine-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: #ffffff;
+            border: 2px dashed rgba(129, 111, 175, 0.62);
+            border-radius: 7px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: rgb(255, 255, 255);
+            margin-right: 5px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: RGBA(129, 111, 175, 1);
+            background: linear-gradient(90deg, rgba(129, 111, 175, 0.62) 0%, rgba(103, 188, 191, 0.62) 100%);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="./logo.png" alt="" class="logo">
+    <div class="tabs">
+        <div class="tab" onclick="window.location.href='result.html'">Подборка</div>
+        <div class="tab active">Календарь</div>
+        <div class="tab">Канал</div>
+    </div>
+
+    <div class="calendar">
+        <div class="calendar-header">
+            <div class="calendar-title">Календарь</div>
+            <div class="current-time" id="current-time"></div>
+        </div>
+        <div class="week-days">
+            <div>Пн</div>
+            <div>Вт</div>
+            <div>Ср</div>
+            <div>Чт</div>
+            <div>Пт</div>
+            <div>Сб</div>
+            <div>Вс</div>
+        </div>
+        <div class="days" id="calendar-days"></div>
+    </div>
+
+    <div class="routine-section">
+        <div class="routine-title">Утренний уход</div>
+        <div id="morning-routine"></div>
+    </div>
+
+    <div class="routine-section">
+        <div class="routine-title">Вечерний уход</div>
+        <div id="evening-routine"></div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <script>
+        const saveSession = (user, lastPage) => {
+            localStorage.setItem('tgUser', JSON.stringify(user));
+            localStorage.setItem('lastPage', lastPage);
+        };
+
+        const getSession = () => {
+            return JSON.parse(localStorage.getItem('tgUser'));
+        };
+
+        const getLastPage = () => {
+            return localStorage.getItem('lastPage') || 'selfie.html';
+        };
+
+        const tg = window.Telegram.WebApp;
+        const user = getSession();
+
+        // alert(user);
+
+
+        // Показываем текущее время и обновляем каждую минуту
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes();
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        setInterval(updateCurrentTime, 60000);
+        updateCurrentTime();
+
+        // Генерируем календарь на текущий месяц
+        function generateCalendar() {
+            const now = new Date();
+            const currentDay = now.getDate();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            let calendarHTML = '';
+            let dayCounter = 1;
+
+            // Пустые ячейки для дней предыдущего месяца
+            for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) {
+                calendarHTML += '<div class="day"></div>';
+            }
+
+            // Дни текущего месяца
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayClass = i === currentDay ? 'day current-day' : 'day';
+                calendarHTML += `<div class="${dayClass}">${i}</div>`;
+            }
+
+            document.getElementById('calendar-days').innerHTML = calendarHTML;
+        }
+
+        // Получаем рекомендации из localStorage
+        function getRoutineFromHistory() {
+            const history = JSON.parse(localStorage.getItem('skincareHistory')) || [];
+            if (history.length === 0) return null;
+
+            // Берем последнюю запись
+            return history[0].routine;
+        }
+
+        // Формируем утренний и вечерний уход
+        function displayRoutine() {
+            const routine = getRoutineFromHistory();
+            if (!routine) {
+                document.getElementById('morning-routine').innerHTML = '<p>Нет данных о вашем уходе. Сначала выполните подбор.</p>';
+                document.getElementById('evening-routine').innerHTML = '<p>Нет данных о вашем уходе. Сначала выполните подбор.</p>';
+                return;
+            }
+
+            const steps = Object.keys(routine).length;
+            let morningSteps = [];
+            let eveningSteps = [];
+
+            // Определяем какие шаги использовать утром и вечером
+            if (steps === 3) {
+                // Утро: все 3 шага
+                morningSteps = ['cleansing', 'treatment', 'protection'];
+                // Вечер: только очищение и лечение
+                eveningSteps = ['cleansing', 'treatment'];
+            } else if (steps === 5) {
+                // Утро: все 5 шагов
+                morningSteps = ['cleansing', 'toning', 'treatment', 'moisturizing', 'protection'];
+                // Вечер: очищение, тонизирование, лечение, увлажнение
+                eveningSteps = ['cleansing', 'toning', 'treatment', 'moisturizing'];
+            } else if (steps === 7) {
+                // Утро: очищение, тонизирование, лечение, ампулы, увлажнение, защита
+                morningSteps = ['cleansing', 'toning', 'treatment', 'ampoules', 'moisturizing', 'protection'];
+                // Вечер: очищение, тонизирование, эксфолиация, ампулы, увлажнение
+                eveningSteps = ['cleansing', 'toning', 'exfoliating', 'ampoules', 'moisturizing'];
+            }
+
+            // Отображаем утренний уход
+            const morningHTML = morningSteps.map(step => {
+                const products = routine[step];
+                if (!products || products.length === 0) return '';
+
+                return products.map(product => `
+                    <div class="routine-item">
+                        ${product.brand || 'Бренд не указан'} - ${product.name || 'Название не указано'}
+                    </div>
+                `).join('');
+            }).join('');
+
+            document.getElementById('morning-routine').innerHTML = morningHTML || '<p>Нет рекомендаций для утреннего ухода</p>';
+
+            // Отображаем вечерний уход
+            const eveningHTML = eveningSteps.map(step => {
+                const products = routine[step];
+                if (!products || products.length === 0) return '';
+
+                return products.map(product => `
+                    <div class="routine-item">
+                        ${product.brand || 'Бренд не указан'} - ${product.name || 'Название не указано'}
+                    </div>
+                `).join('');
+            }).join('');
+
+            document.getElementById('evening-routine').innerHTML = eveningHTML || '<p>Нет рекомендаций для вечернего ухода</p>';
+        }
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function () {
+            generateCalendar();
+            displayRoutine();
+        });
+    </script>
+</body>
+
+</html>

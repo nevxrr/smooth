@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты подбора</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wdth,wght,XOPQ@8..144,151,100..1000,102&family=Roboto:wght@800&display=swap');
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background-color: rgb(229, 254, 255);
+            font-family: "Roboto Flex", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+            font-variation-settings:
+                "slnt" 0,
+                "wdth" 151,
+                "GRAD" 0,
+                "XOPQ" 102,
+                "XTRA" 468,
+                "YOPQ" 79,
+                "YTAS" 750,
+                "YTDE" -203,
+                "YTFI" 738,
+                "YTLC" 514,
+                "YTUC" 712;
+            /* overflow-y: hidden; */
+        }
+
+        body {
+            display: flex;
+            /* justify-content: center; */
+            align-items: center;
+            flex-direction: column;
+            /* text-align: center; */
+            /* height: 70%; */
+        }
+
+        .logo {
+            margin-top: 20px;
+            width: 81px;
+            height: 32px;
+        }
+
+        h1 {
+            color: #2b2d42;
+            margin-left: 20px;
+        }
+
+        #results-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step {
+            margin-bottom: 30px;
+            padding: 15px;
+            width: 80%;
+            /* border: 1px solid #eee; */
+            /* background-color: rgba(186, 229, 231, 1); */
+            background-color: rgb(255, 255, 255);
+            border-radius: 15px;
+            color: #2b2d42;
+        }
+
+        .product {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: rgba(186, 229, 231, 0.265);
+            border-radius: 10px;
+            color: #2b2d42;
+        }
+
+        .error {
+            color: red;
+            padding: 10px;
+            border: 1px solid red;
+        }
+
+        button {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-family: "Roboto Flex", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+            display: flex;
+            font-variation-settings:
+                "slnt" 0,
+                "wdth" 151,
+                "GRAD" 0,
+                "XOPQ" 102,
+                "XTRA" 468,
+                "YOPQ" 79,
+                "YTAS" 750,
+                "YTDE" -203,
+                "YTFI" 738,
+                "YTLC" 514,
+                "YTUC" 712;
+            font-weight: 500;
+            font-size: 18px;
+            border-radius: 10px;
+            outline: none;
+            border: none;
+            color: #ffffff;
+            width: 289px;
+            height: 52px;
+            align-items: center;
+            justify-content: center;
+            /* padding: 10px 20px; */
+            background: RGBA(129, 111, 175, 1);
+            background: linear-gradient(90deg, rgba(129, 111, 175, 0.62) 0%, rgba(103, 188, 191, 0.62) 100%);
+        }
+
+        .history {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            padding: 15px;
+            width: 80%;
+            /* border: 1px solid #eee; */
+            /* background-color: rgba(186, 229, 231, 1); */
+            background-color: rgb(255, 255, 255);
+            border-radius: 15px;
+            color: #2b2d42;
+        }
+
+        hr {
+            background-color: rgba(186, 229, 231, 0.265);
+            height: 2px;
+            border: none;
+            border-radius: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="./logo.png" alt="" class="logo">
+    <div id="results-container">
+    </div>
+    <div id="history-container" class="history"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        // Конфигурация
+        const CONFIG = {
+            SKIN_TYPE_MAPPING: {
+                'сухая': 'dry',
+                'жирная': 'oily',
+                'чувствительная': 'sensitive',
+                'комбинированная': 'combination',
+                'нормальная': 'normal'
+            },
+            GOALS_MAPPING: {
+                'увлажнение': 'hydration',
+                'борьба с акне': 'acne',
+                'избавление от морщин': 'anti-aging',
+                'осветление пигментации': 'brightening',
+                'успокоение кожи': 'soothing',
+                'повреждённый барьер': 'barrier repair',
+                'покраснения': 'redness relief'
+            },
+            STEP_MAPPING: {
+                3: ['cleansing', 'treatment', 'protection'],
+                5: ['cleansing', 'toning', 'treatment', 'moisturizing', 'protection'],
+                7: ['cleansing', 'exfoliating', 'toning', 'treatment', 'ampoules', 'moisturizing', 'protection']
+            },
+            STEP_NAMES: {
+                'cleansing': 'Очищение',
+                'treatment': 'Лечение/Сыворотка',
+                'protection': 'Защита (SPF)',
+                'moisturizing': 'Увлажнение',
+                'toning': 'Тонизирование',
+                'exfoliating': 'Эксфолиация',
+                'ampoules': 'Ампулы'
+            }
+        };
+
+        // Основная функция
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+
+                // 1. Получаем ответы из localStorage
+                const userAnswers = JSON.parse(localStorage.getItem('quizAnswers')) || {};
+                console.log("Ответы пользователя:", userAnswers);
+
+                // 2. Преобразуем ответы в параметры поиска
+                const searchParams = mapAnswersToParams(userAnswers);
+                console.log("Параметры поиска:", searchParams);
+
+                // 3. Загружаем данные
+                const products = await loadProductsData();
+                console.log("Загружено продуктов:", products.length);
+
+                // 4. Фильтруем продукты
+                const filteredProducts = filterProducts(products, searchParams);
+                console.log("Найдено подходящих:", filteredProducts.length);
+
+                if (filteredProducts.length === 0) {
+                    showNoResults(searchParams);
+                    return;
+                }
+
+                // 5. Группируем по шагам ухода
+                const routine = groupProductsBySteps(filteredProducts, searchParams.steps);
+
+
+                // 6. Сохраняем результаты в историю
+                saveToHistory(searchParams, routine);
+
+
+                // 7. Отображаем результаты
+                displayResults(routine);
+
+                // 8. Показываем историю
+                displayHistory();
+
+            } catch (error) {
+                console.error("Ошибка:", error);
+                showError(`Произошла ошибка: ${error.message}`);
+            }
+        });
+
+        // Функция преобразования ответов в параметры поиска
+        function mapAnswersToParams(answers) {
+            // Вопрос 2: тип кожи
+            const skinType = answers[2]?.[0] ? CONFIG.SKIN_TYPE_MAPPING[answers[2][0].toLowerCase()] : 'all';
+
+            // Вопрос 4: цели ухода
+            const goals = answers[4]?.map(goal => {
+                const lowerGoal = goal.toLowerCase();
+                return CONFIG.GOALS_MAPPING[lowerGoal] || lowerGoal;
+            }) || [];
+
+            // Вопрос 5: количество шагов
+            let steps = 5;
+            if (answers[5]?.[0]) {
+                if (answers[5][0].includes('3 шага')) steps = 3;
+                else if (answers[5][0].includes('7+ шагов')) steps = 7;
+            }
+
+            // Вопрос 7: бюджет
+            let price = { min: 0, max: Infinity };
+            if (answers[7]?.[0]) {
+                if (answers[7][0].includes('1000-3000')) price = { min: 1000, max: 3000 };
+                else if (answers[7][0].includes('Выше 3000')) price = { min: 3000, max: Infinity };
+            }
+
+            return {
+                skin: skinType,
+                goals: goals,
+                steps: steps,
+                country: 'all', // По вашему примеру "Нет предпочтений"
+                price: price
+            };
+        }
+
+        // Загрузка данных из XLSX
+        async function loadProductsData() {
+            try {
+                const response = await fetch('data.xlsx');
+                const arrayBuffer = await response.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                return XLSX.utils.sheet_to_json(firstSheet);
+            } catch (error) {
+                throw new Error('Не удалось загрузить данные о продуктах');
+            }
+        }
+
+        // Фильтрация продуктов
+        function filterProducts(products, params) {
+            return products.filter(product => {
+                try {
+                    // Проверка типа кожи
+                    const skinMatch = !product.skin_type ||
+                        product.skin_type.toLowerCase() === 'all' ||
+                        product.skin_type.toLowerCase() === params.skin;
+
+                    // Проверка целей
+                    const goalsMatch = params.goals.length === 0 ||
+                        (product.benefits && params.goals.some(goal =>
+                            product.benefits.toLowerCase().includes(goal.toLowerCase())
+                        ));
+
+                    // Проверка цены
+                    const price = parseFloat(product.price) || 0;
+                    const priceMatch = price >= params.price.min && price <= params.price.max;
+
+                    return skinMatch && goalsMatch && priceMatch;
+                } catch (e) {
+                    console.warn('Ошибка фильтрации продукта:', product, e);
+                    return false;
+                }
+            });
+        }
+
+        // Группировка продуктов по шагам ухода
+        function groupProductsBySteps(products, stepCount) {
+            const steps = CONFIG.STEP_MAPPING[stepCount] || CONFIG.STEP_MAPPING[5];
+            const result = {};
+
+            steps.forEach(step => {
+                // Фильтруем продукты для текущего шага
+                const stepProducts = products.filter(p => {
+                    if (!p.step) return false;
+
+                    try {
+                        const productStep = p.step.toLowerCase().trim();
+                        const searchStep = step.toLowerCase();
+
+                        // Проверяем соответствие шагу
+                        return productStep.includes(searchStep) ||
+                            (searchStep === 'protection' && p.is_spf && p.is_spf.toLowerCase() === 'true');
+                    } catch (e) {
+                        console.warn('Ошибка обработки шага продукта:', p, e);
+                        return false;
+                    }
+                });
+
+                // Сортируем по рейтингу (убывание) и цене (возрастание)
+                stepProducts.sort((a, b) => {
+                    const ratingA = parseFloat(a.rating) || 0;
+                    const ratingB = parseFloat(b.rating) || 0;
+                    if (ratingB !== ratingA) return ratingB - ratingA;
+                    return (parseFloat(a.price) || 0) - (parseFloat(b.price) || 0);
+                });
+
+                // Берем топ-3 продукта для шага
+                result[step] = stepProducts.slice(0, 1);
+            });
+
+            return result;
+        }
+
+        // Отображение результатов
+        function displayResults(routine) {
+            const container = document.getElementById('results-container');
+            let html = '<h1>Ваши рекомендации по уходу</h1>';
+
+            for (const [step, products] of Object.entries(routine)) {
+                const stepName = CONFIG.STEP_NAMES[step] || step;
+                html += `<div class="step"><h2>${stepName}</h2>`;
+
+                if (products && products.length > 0) {
+                    products.forEach(product => {
+                        html += `
+                            <div class="product">
+                                <p><strong>${product.brand || 'Бренд не указан'} - ${product.name || 'Название не указано'}</strong></p>
+                                ${product.price ? `<p>Цена: ${product.price} ₽</p>` : ''}
+                                ${product.rating ? `<p>Рейтинг: ${product.rating}/5</p>` : ''}
+                            </div>
+                        `;
+                    });
+                } else {
+                    html += '<p>Не найдено подходящих средств для этого шага</p>';
+                }
+
+                html += '</div>';
+            }
+
+            html += `<button onclick="window.location.href='opros.html'">Пройти опрос заново</button>
+            <button onclick="window.location.href='calendar.html'">Добавить в календарь</button>`;
+            container.innerHTML = html;
+        }
+
+        // Предположим, что у вас есть функция, которая обновляет данные
+
+
+        // Функция сохранения результатов в историю
+        function saveToHistory(params, routine) {
+            const history = JSON.parse(localStorage.getItem('skincareHistory')) || [];
+
+            const historyEntry = {
+                date: new Date().toLocaleString(),
+                params: params,
+                routine: Object.keys(routine).reduce((acc, step) => {
+                    acc[step] = routine[step].map(p => ({
+                        name: p.name,
+                        brand: p.brand,
+                        price: p.price
+                    }));
+                    return acc;
+                }, {})
+            };
+
+            // Добавляем новую запись в начало истории
+            history.unshift(historyEntry);
+
+            // Сохраняем только последние 10 записей
+            localStorage.setItem('skincareHistory', JSON.stringify(history.slice(0, 10)));
+        }
+
+        // Функция отображения истории
+        function displayHistory() {
+            const history = JSON.parse(localStorage.getItem('skincareHistory')) || [];
+            if (history.length === 0) return;
+
+            const container = document.getElementById('history-container');
+            let html = '<h2>История подбора</h2>';
+
+            history.forEach((entry, index) => {
+                html += `
+                    <div class="history-entry">
+                        <h3>Подбор от ${entry.date}</h3>
+                        <p><strong>Параметры:</strong> 
+                        Тип кожи: ${entry.params.skin}, 
+                        Цели: ${entry.params.goals.join(', ')}, 
+                        Шагов: ${entry.params.steps}</p>
+                        
+                        <button onclick="showHistoryDetails(${index})">Показать детали</button>
+                        <div id="history-details-${index}" style="display:none; margin-top:10px;">
+                            ${Object.entries(entry.routine).map(([step, products]) => `
+                                <div>
+                                    <h4>${CONFIG.STEP_NAMES[step] || step}</h4>
+                                    ${products.map(p => `
+                                        <p>${p.brand} - ${p.name} (${p.price} ₽)</p>
+                                    `).join('')}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <hr>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Функция для показа деталей истории
+        window.showHistoryDetails = function (index) {
+            const details = document.getElementById(`history-details-${index}`);
+            details.style.display = details.style.display === 'none' ? 'block' : 'none';
+        };
+
+        // Остальные функции остаются без изменений (mapAnswersToParams, loadProductsData, filterProducts, 
+        // groupProductsBySteps, displayResults, showNoResults, showError)
+        // ... (вставьте сюда все остальные функции из предыдущего кода без изменений)
+
+        // Показать сообщение об отсутствии результатов
+        function showNoResults(params) {
+            const container = document.getElementById('results-container');
+            container.innerHTML = `
+                <div class="error">
+                    <h2>Не найдено подходящих средств</h2>
+                    <p>По вашим критериям:</p>
+                    <ul>
+                        <li>Тип кожи: ${params.skin}</li>
+                        <li>Цели: ${params.goals.join(', ')}</li>
+                        <li>Бюджет: ${params.price.min}-${params.price.max === Infinity ? '∞' : params.price.max} ₽</li>
+                    </ul>
+                    <p>Попробуйте изменить параметры поиска</p>
+                    <button onclick="window.location.href='opros.html'">Пройти опрос заново</button>
+                </div>
+            `;
+        }
+
+        // Показать сообщение об ошибке
+        function showError(message) {
+            const container = document.getElementById('results-container');
+            container.innerHTML = `
+                <div class="error">
+                    <h2>Ошибка</h2>
+                    <p>${message}</p>
+                    <button onclick="window.location.href='opros.html'">Пройти опрос заново</button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+
+</html>
