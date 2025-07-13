@@ -18,7 +18,7 @@
         </div>
     </main>
     <div class="btns">
-        <button class="reg">✨ НАЧАТЬ ✨</button>
+        <button class="reg" onclick="redir()">✨ НАЧАТЬ ✨</button>
     </div>
     <p class="policy">Продолжая, вы соглашаетесь с нашими <a href="">условиями</a> и <a href="">политикой
             конфиденциальности</a></p>
@@ -44,7 +44,7 @@
             const lastPage = getLastPage();
             window.location.href = lastPage;
         } else {
-            document.querySelector('.reg').addEventListener('click', () => {
+            function redir() {
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     saveSession(tg.initDataUnsafe.user, 'selfie.html');
                     alert('Вы успешно авторизованы через Telegram Mini App!');
@@ -52,7 +52,7 @@
                 } else {
                     alert('Пожалуйста, авторизуйтесь через Telegram Mini App.');
                 }
-            });
+            }
         }
 
         window.addEventListener('beforeunload', () => {
