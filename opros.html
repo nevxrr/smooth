@@ -40,9 +40,13 @@
         const questionContainer = document.getElementById("question-container");
         const nextButton = document.getElementById("nextt-button");
 
+
         nextButton.addEventListener('click', () => {
-            localStorage.setItem('nexttButtonClicked', 'true');
-            window.location.href = 'result.html';
+            const questionData = questions[currentQuestionIndex];
+            if (questionData.question == 'Какой бюджет на уход?') {
+                localStorage.setItem('nexttButtonClicked', 'true');
+                window.location.href = 'result.html';
+            }
         });
 
         // Check local storage on page load
