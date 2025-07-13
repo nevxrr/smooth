@@ -148,6 +148,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
+        function returnBack() {
+            localStorage.setItem('nextButtonClicked', 'false');
+            window.location.href = 'opros.html';
+        }
         // Конфигурация
         const CONFIG = {
             SKIN_TYPE_MAPPING: {
@@ -366,9 +370,11 @@
                 html += '</div>';
             }
 
-            html += `<button onclick="window.location.href='opros.html'">Пройти опрос заново</button>
+            html += `<button onclick="returnBack()">Пройти опрос заново</button>
             <button onclick="window.location.href='calendar.html'">Добавить в календарь</button>`;
             container.innerHTML = html;
+
+
         }
 
         // Предположим, что у вас есть функция, которая обновляет данные

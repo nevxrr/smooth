@@ -31,12 +31,27 @@
             { question: "Какой бюджет на уход?", opis: "Подберем варианты под твои предпочтения ", answers: ["До 1000₽", "1000-3000₽", "Выше 3000₽"] }
         ];
 
+
+
         let currentQuestionIndex = 0;
         const answers = {};
 
         const progressBar = document.getElementById("progress-bar");
         const questionContainer = document.getElementById("question-container");
         const nextButton = document.getElementById("next-button");
+
+        nextButton.addEventListener('click', () => {
+            localStorage.setItem('nextButtonClicked', 'true');
+            window.location.href = 'result.html';
+        });
+
+        // Check local storage on page load
+        window.addEventListener('load', () => {
+            const nextButtonClicked = localStorage.getItem('nextButtonClicked');
+            if (nextButtonClicked === 'true') {
+                window.location.href = 'result.html';
+            }
+        });
 
         function renderQuestion() {
             const questionData = questions[currentQuestionIndex];

@@ -145,7 +145,7 @@ p {
 }
 
 /* Focus */
-#question-container input[type=radio]:focus+span {
+#question-container input[type=radio]:checked+span {
     color: #fff;
     background-color: rgba(129, 111, 175, 0.62);
     box-shadow: 0 0 0 0.2rem rgba(129, 111, 175, 0.258);
