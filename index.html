@@ -47,8 +47,8 @@
             function redir() {
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     saveSession(tg.initDataUnsafe.user, 'selfie.html');
-                    alert('Вы успешно авторизованы через Telegram Mini App!');
-                    // window.location.href = 'selfie.html';
+                    // alert('Вы успешно авторизованы через Telegram Mini App!');
+                    window.location.href = 'selfie.html';
                 } else {
                     alert('Пожалуйста, авторизуйтесь через Telegram Mini App.');
                 }
