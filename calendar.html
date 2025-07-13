@@ -150,9 +150,9 @@
 <body>
     <img src="./logo.png" alt="" class="logo">
     <div class="tabs">
-        <div class="tab" onclick="window.location.href='result.html'">Подборка</div>
+        <div class="tab" onclick="returnBack()">Подборка</div>
         <div class="tab active">Календарь</div>
-        <div class="tab">Канал</div>
+        <div class="tab" onclick="window.location.href='https://t.me/smoothapp'">Канал</div>
     </div>
 
     <div class="calendar">
@@ -185,6 +185,12 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <script>
+
+        function returnBack() {
+            localStorage.setItem('nextToCal', 'false');
+            window.location.href = 'result.html';
+        }
+
         const saveSession = (user, lastPage) => {
             localStorage.setItem('tgUser', JSON.stringify(user));
             localStorage.setItem('lastPage', lastPage);

@@ -152,6 +152,18 @@
             localStorage.setItem('nexttButtonClicked', 'false');
             window.location.href = 'opros.html';
         }
+        function nextToCalendar() {
+            localStorage.setItem('nextToCal', 'true');
+            window.location.href = 'calendar.html';
+        }
+
+        // Check local storage on page load
+        window.addEventListener('load', () => {
+            const nextButtonClicked = localStorage.getItem('nextToCal');
+            if (nextButtonClicked === 'true') {
+                window.location.href = 'calendar.html';
+            }
+        });
         // Конфигурация
         const CONFIG = {
             SKIN_TYPE_MAPPING: {
@@ -371,8 +383,9 @@
             }
 
             html += `<button onclick="returnBack()">Пройти опрос заново</button>
-            <button onclick="window.location.href='calendar.html'">Добавить в календарь</button>`;
+            <button onclick="nextToCalendar()">Добавить в календарь</button>`;
             container.innerHTML = html;
+
 
 
         }
