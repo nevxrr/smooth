@@ -16,7 +16,7 @@
             <div id="bar-shutter"></div>
         </div>
         <div id="question-container" class="gridQuest"></div>
-        <button id="next-button" style="margin-top: 20px;">Далее</button>
+        <button id="nextt-button" style="margin-top: 20px;">Далее</button>
     </div>
 
     <script>
@@ -38,16 +38,16 @@
 
         const progressBar = document.getElementById("progress-bar");
         const questionContainer = document.getElementById("question-container");
-        const nextButton = document.getElementById("next-button");
+        const nextButton = document.getElementById("nextt-button");
 
         nextButton.addEventListener('click', () => {
-            localStorage.setItem('nextButtonClicked', 'true');
+            localStorage.setItem('nexttButtonClicked', 'true');
             window.location.href = 'result.html';
         });
 
         // Check local storage on page load
         window.addEventListener('load', () => {
-            const nextButtonClicked = localStorage.getItem('nextButtonClicked');
+            const nextButtonClicked = localStorage.getItem('nexttButtonClicked');
             if (nextButtonClicked === 'true') {
                 window.location.href = 'result.html';
             }
